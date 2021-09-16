@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyBrowserApp", "AssemblyBrowserApp\AssemblyBrowserApp.csproj", "{115130C4-3301-4B7A-855A-102800EFC5F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyBrowser", "AssemblyBrowser\AssemblyBrowser.csproj", "{651C4D11-EBE5-4555-AFC1-44DA7362CFE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{115130C4-3301-4B7A-855A-102800EFC5F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{115130C4-3301-4B7A-855A-102800EFC5F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{115130C4-3301-4B7A-855A-102800EFC5F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{115130C4-3301-4B7A-855A-102800EFC5F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{651C4D11-EBE5-4555-AFC1-44DA7362CFE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{651C4D11-EBE5-4555-AFC1-44DA7362CFE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{651C4D11-EBE5-4555-AFC1-44DA7362CFE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{651C4D11-EBE5-4555-AFC1-44DA7362CFE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
