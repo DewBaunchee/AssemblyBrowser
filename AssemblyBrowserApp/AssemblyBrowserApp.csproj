@@ -4,11 +4,11 @@
         <OutputType>WinExe</OutputType>
         <TargetFramework>net5.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
-        <RootNamespace>AssemblyBrowser</RootNamespace>
+        <RootNamespace>AssemblyBrowserApp</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AssemblyBrowser\AssemblyBrowser.csproj" />
+      <ProjectReference Include="..\AssemblyBrowserLib\AssemblyBrowserLib.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
-﻿using AssemblyBrowser.Entity.Tree;
+﻿using AssemblyBrowserLib.Entity.Tree;
 
-namespace AssemblyBrowser
+namespace AssemblyBrowserLib
 {
     public abstract class AbstractBrowser
     {
@@ -11,6 +11,7 @@ namespace AssemblyBrowser
             AssemblyRoot = assemblyRoot;
         }
         
-        public abstract AssemblyTree GetAssemblyStructure();
+        public abstract void LoadAssembly();
+        public abstract Assembly GetAssemblyStructure();
     }
 }
