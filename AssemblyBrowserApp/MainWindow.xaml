@@ -5,18 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:self="clr-namespace:AssemblyBrowserLib.Entity;assembly=AssemblyBrowserLib"
         mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="MainWindow" Height="450" Width="800" >
     <Grid>
-        <RibbonTextBox Text="{Binding Path=Root, Mode=TwoWay}" 
+        <RibbonTextBox Text="{Binding Path=ViewModel.Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                        BorderBrush="DarkGray" 
                        MouseOverBorderBrush="Black" 
                        FocusedBorderBrush="Black" 
                        TextBoxWidth="500"
-                       HorizontalAlignment="Center"/>
-        <RibbonTextBox Text="{Binding Path=IsLoading}" ></RibbonTextBox>
-        <TreeView x:Name="AssemblyView" Margin="50">
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Top" 
+                       Margin="0,10,0,0" 
+                       Height="26" 
+                       Width="510"/>
+        <Label Content="{Binding Path=ViewModel.ProcessMessage, Mode=TwoWay}" 
+               HorizontalContentAlignment="Left" 
+               HorizontalAlignment="Center" 
+               Margin="0,41,0,0" 
+               VerticalAlignment="Top" 
+               Width="500"/>
+        <TreeView x:Name="AssemblyView" Margin="50,85,50,50">
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type self:AssemblyNode}" ItemsSource="{Binding Path=Children}">
+                <HierarchicalDataTemplate DataType="{x:Type self:AssemblyNode}" 
+                                          ItemsSource="{Binding Path=Children}">
                     <TextBlock Text="{Binding}" />
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>

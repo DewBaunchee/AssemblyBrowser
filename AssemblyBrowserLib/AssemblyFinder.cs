@@ -18,8 +18,16 @@ namespace AssemblyBrowserLib
             if (Directory.Exists(root))
             {
                 var paths = new List<string>();
-                Directory.GetFileSystemEntries(root).ToList()
-                    .ForEach(path => paths.AddRange(FindAssemblies(path)));
+                try
+                {
+                    Directory.GetFileSystemEntries(root).ToList()
+                        .ForEach(path => paths.AddRange(FindAssemblies(path)));
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
                 return paths;
             }
 

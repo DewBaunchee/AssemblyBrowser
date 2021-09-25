@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.IO;
 using System.Threading;
 using AssemblyBrowserLib;
 using AssemblyBrowserLib.Entity;
@@ -10,66 +10,51 @@ namespace AssemblyBrowserApp
     public partial class MainWindow
     {
 
-        private Thread _assembliesLoadingThread;
-        private string _root;
-        private bool IsLoading { get; set; }
-        private string Root
-        {
-            get => _root;
-            set
-            {
-                if (value == _root) return;
-                
-                _root = value;
-                OnPropertyChanged(nameof(Root));
-            }
-        }
-        private ObservableCollection<AssemblyNode> Nodes { get; set; }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public AssemblyBrowserViewModel ViewModel { get; }
         
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public MainWindow()
         {
+            ViewModel = new AssemblyBrowserViewModel();
             InitializeComponent();
-            PropertyChanged += (_, e) =>
+            ViewModel.PropertyChanged += (_, e) =>
             {
-                if(e.PropertyName == "Root")
+                if (e.PropertyName == "Root")
                     LoadAssemblies();
             };
-            Root = "/University/SSP/AssemblyBrowserLab";
         }
 
         private void LoadAssemblies()
         {
-            _assembliesLoadingThread?.Join();
-            _assembliesLoadingThread = new Thread(() =>
+            ViewModel.AssembliesLoadingThread?.Interrupt();
+            ChangeProcessMessage("");
+            
+            if (!Directory.Exists(ViewModel.Root) && !File.Exists(ViewModel.Root))
+                return;
+            
+            ViewModel.AssembliesLoadingThread = new Thread(() =>
             {
-                Nodes = new ObservableCollection<AssemblyNode>();
-                List<string> assemblies = AssemblyFinder.FindAssemblies(Root);
-                Dispatcher.Invoke(() =>
-                {
-                    IsLoading = true;
-                    AssemblyView.ItemsSource = Nodes;
-                });
+                ViewModel.Nodes = new ObservableCollection<AssemblyNode>();
+                Dispatcher.Invoke(() => AssemblyView.ItemsSource = ViewModel.Nodes);
+                ChangeProcessMessage("Searching assemblies...");
+                List<string> assemblies = AssemblyFinder.FindAssemblies(ViewModel.Root);
 
                 assemblies.ForEach(path =>
                 {
+                    ChangeProcessMessage("Loading assembly: " + path +"...");
                     var browser = new AssemblyBrowser(path);
                     browser.LoadAssembly();
-                    Dispatcher.Invoke(() => Nodes.Add(browser.GetAssemblyStructure()));
+                    Dispatcher.Invoke(() => ViewModel.Nodes.Add(browser.GetAssemblyStructure()));
                 });
 
-                Dispatcher.Invoke(() =>
-                {
-                    IsLoading = false;
-                });
+                ChangeProcessMessage("");
             });
-            _assembliesLoadingThread.Start();
+            
+            ViewModel.AssembliesLoadingThread.Start();
+        }
+
+        private void ChangeProcessMessage(string message)
+        {
+            Dispatcher.Invoke(() => ViewModel.ProcessMessage = message);
         }
     }
 }
