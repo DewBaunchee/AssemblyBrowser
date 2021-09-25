@@ -12,6 +12,7 @@ namespace AssemblyBrowserApp
 
         private Thread _assembliesLoadingThread;
         private string _root;
+        private bool IsLoading { get; set; }
         private string Root
         {
             get => _root;
@@ -50,13 +51,22 @@ namespace AssemblyBrowserApp
             {
                 Nodes = new ObservableCollection<AssemblyNode>();
                 List<string> assemblies = AssemblyFinder.FindAssemblies(Root);
-                Dispatcher.Invoke(() => AssemblyView.ItemsSource = Nodes);
+                Dispatcher.Invoke(() =>
+                {
+                    IsLoading = true;
+                    AssemblyView.ItemsSource = Nodes;
+                });
 
                 assemblies.ForEach(path =>
                 {
                     var browser = new AssemblyBrowser(path);
                     browser.LoadAssembly();
                     Dispatcher.Invoke(() => Nodes.Add(browser.GetAssemblyStructure()));
+                });
+
+                Dispatcher.Invoke(() =>
+                {
+                    IsLoading = false;
                 });
             });
             _assembliesLoadingThread.Start();
