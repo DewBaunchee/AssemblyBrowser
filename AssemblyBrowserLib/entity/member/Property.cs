@@ -12,7 +12,7 @@
 
         public override string ToString()
         {
-            return Type + " " + Name + "{" + (CanRead ? "get;" : "") + (CanWrite ? "set;" : "") + "}";
+            return Type + " " + Name + "{ " + ((CanRead ? "get; " : "") + (CanWrite ? "set;" : "")).Trim() + " }";
         }
     }
 }
