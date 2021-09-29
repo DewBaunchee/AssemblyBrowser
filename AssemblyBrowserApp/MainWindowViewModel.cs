@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
-using System.Windows;
 using System.Windows.Threading;
 using AssemblyBrowserLib;
 using AssemblyBrowserLib.Entity;
@@ -13,9 +13,10 @@ namespace AssemblyBrowserApp
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        private Thread AssembliesLoadingThread { get; set; }
+        private CancellationTokenSource _cancellationTokenSource;
 
         private string _processMessage;
+
         public string ProcessMessage
         {
             get => _processMessage;
@@ -29,6 +30,7 @@ namespace AssemblyBrowserApp
         }
 
         private string _root;
+
         public string Root
         {
             get => _root;
@@ -65,13 +67,17 @@ namespace AssemblyBrowserApp
 
         private void LoadAssemblies()
         {
-            AssembliesLoadingThread?.Interrupt();
+            if (_cancellationTokenSource != null)
+                _cancellationTokenSource.Cancel();
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken token = _cancellationTokenSource.Token;
             ChangeProcessMessage("");
-            
+
             if (!Directory.Exists(Root) && !File.Exists(Root))
                 return;
-            
-            AssembliesLoadingThread = new Thread(() =>
+
+            new Thread(() =>
             {
                 _dispatcher.Invoke(() => Nodes.Clear());
                 ChangeProcessMessage("Searching assemblies...");
@@ -79,23 +85,24 @@ namespace AssemblyBrowserApp
 
                 assemblies.ForEach(path =>
                 {
-                    ChangeProcessMessage("Loading assembly: " + path +"...");
+                    token.ThrowIfCancellationRequested();
+
+                    ChangeProcessMessage("Loading assembly: " + path + "...");
                     var browser = new AssemblyBrowser(path);
                     try
                     {
                         browser.LoadAssembly();
-                        _dispatcher.Invoke(() => Nodes.Add(browser.GetAssemblyStructure()));
+                        if (!token.IsCancellationRequested)
+                            _dispatcher.Invoke(() => Nodes.Add(browser.GetAssemblyStructure()));
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        MessageBox.Show(e.Message, "Cannot load assembly");
+                        // ignored
                     }
                 });
 
                 ChangeProcessMessage("");
-            });
-            
-            AssembliesLoadingThread.Start();
+            }).Start();
         }
 
         private void ChangeProcessMessage(string message)
